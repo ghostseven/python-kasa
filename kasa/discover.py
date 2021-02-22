@@ -86,16 +86,13 @@ class _DiscoverProtocol(asyncio.DatagramProtocol):
             device = device_class(ip)
         else:
             info = json.loads(data[16:])
+            _LOGGER.debug("[DISCOVERY] discovery response is %s", data[16:])
+
             device_class = Discover._get_new_device_class(info)
             owner = Discover._get_new_owner(info)
             if owner is not None:
                 owner_bin = bytes.fromhex(owner)
 
-            _LOGGER.debug(
-                "[DISCOVERY] Device owner is %s, empty owner is %s",
-                owner_bin,
-                self.emptyUser,
-            )
             if owner is None or owner == "" or owner_bin == self.emptyUser:
                 _LOGGER.debug("[DISCOVERY] Device %s has no owner", ip)
                 device = device_class(ip, Auth())
